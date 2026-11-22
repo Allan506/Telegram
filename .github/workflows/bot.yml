@@ -1,0 +1,64 @@
+name: Telegram Bot
+
+# El bot corre con long polling dentro de un job de GitHub Actions.
+# GitHub corta los jobs a las 6 h, así que el bot se auto-reinicia antes de llegar
+# al límite y, además, un cron cada 6 h actúa de vigilante por si el reinicio falla.
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+# Nunca dos instancias a la vez: el long polling con el mismo token daría 409.
+concurrency:
+  group: telegram-bot
+  cancel-in-progress: false
+
+jobs:
+  bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Restaurar estado (offset de Telegram)
+        uses: actions/cache/restore@v4
+        with:
+          path: state
+          key: bot-state-${{ github.run_id }}
+          restore-keys: |
+            bot-state-
+
+      - name: Ejecutar bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ALLOWED_USER_IDS: ${{ vars.ALLOWED_USER_IDS }}
+          LOG_LEVEL: INFO
+          POLL_TIMEOUT: "30"
+          MAX_RUNTIME_SECONDS: "19200"   # 5 h 20 min
+          SELF_RESTART: "true"
+          STATE_FILE: state/bot-state.json
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_WORKFLOW_FILE: bot.yml
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m bot
+
+      - name: Guardar estado
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: state
+          key: bot-state-${{ github.run_id }}

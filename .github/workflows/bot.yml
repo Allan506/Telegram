@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
+    inputs:
+      max_runtime_seconds:
+        description: "Segundos que corre el bot antes de auto-reiniciarse"
+        required: false
+        default: "19200"
 
 permissions:
   contents: read
@@ -47,7 +52,7 @@ jobs:
           ALLOWED_USER_IDS: ${{ vars.ALLOWED_USER_IDS }}
           LOG_LEVEL: INFO
           POLL_TIMEOUT: "30"
-          MAX_RUNTIME_SECONDS: "19200"   # 5 h 20 min
+          MAX_RUNTIME_SECONDS: ${{ inputs.max_runtime_seconds || '19200' }}   # 5 h 20 min por defecto
           SELF_RESTART: "true"
           STATE_FILE: state/bot-state.json
           GITHUB_REPOSITORY: ${{ github.repository }}

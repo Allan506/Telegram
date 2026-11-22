@@ -6,7 +6,7 @@ Bot de Telegram en Python (long polling) desplegado 24/7 en GitHub Actions.
 
 ```bash
 pip install -r requirements-dev.txt
-pytest                                  # 32 tests, sin red ni token real
+pytest                                  # 33 tests, sin red ni token real
 python -m bot                           # requiere TELEGRAM_BOT_TOKEN
 ruff check bot tests --select F,E9      # lint
 ```

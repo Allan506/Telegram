@@ -8,7 +8,7 @@ encendido todo el día, sin servidor propio y sin pagar hosting.
 - Estado persistente (offset) entre reinicios, para no repetir respuestas.
 - Reintentos con backoff ante errores de red, 429 y 5xx.
 - Lista blanca opcional de usuarios.
-- 32 tests automáticos con un servidor HTTP que imita la API de Telegram.
+- 33 tests automáticos con un servidor HTTP que imita la API de Telegram.
 
 ## Comandos
 
@@ -89,6 +89,9 @@ cron cada 6 h ──► workflow "Telegram Bot"
   pendientes al arrancar (`DRAIN_ON_START`).
 - **Keepalive:** GitHub desactiva los workflows programados tras 60 días sin actividad.
   El workflow `Keepalive` hace un commit pequeño el día 1 de cada mes para evitarlo.
+- **Ejecución manual:** desde Actions → Telegram Bot → Run workflow puedes lanzarlo a
+  mano y, si quieres, cambiar `max_runtime_seconds` (por defecto 19200). Bajar ese valor
+  es útil para probar el auto-reinicio sin esperar 5 horas.
 
 ### Límites que conviene conocer
 

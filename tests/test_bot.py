@@ -129,7 +129,7 @@ def test_respuesta_cita_el_mensaje_original(telegram):
     bot = make_bot(telegram)
     update_id = telegram.queue_message("/ping")
     bot.poll_once()
-    assert telegram.calls_of("send_message")[0]["reply_to_message_id"] == update_id * 10
+    assert telegram.calls_of("sendMessage")[0]["reply_to_message_id"] == update_id * 10
 
 
 def test_estado_persistente_evita_reprocesar(telegram, tmp_path):

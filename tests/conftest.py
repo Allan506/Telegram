@@ -183,14 +183,14 @@ class FakeTelegram:
                     "parameters": {"retry_after": 0},
                 }
 
-        if method == "get_me":
+        if method == "getMe":
             return 200, {
                 "ok": True,
                 "result": {"id": 1, "is_bot": True, "first_name": "Test", "username": "test_bot"},
             }
-        if method == "get_updates":
+        if method == "getUpdates":
             return self._get_updates(params)
-        if method == "send_message":
+        if method == "sendMessage":
             return self._send_message(params)
         return 404, {"ok": False, "description": f"método desconocido: {method}"}
 

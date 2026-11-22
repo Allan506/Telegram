@@ -43,7 +43,7 @@ def test_send_message_envia_un_mensaje(telegram):
     api = make_api(telegram)
     api.send_message(100, "hola")
     assert telegram.sent_texts() == ["hola"]
-    params = telegram.calls_of("send_message")[0]
+    params = telegram.calls_of("sendMessage")[0]
     assert params["chat_id"] == 100
     assert params["parse_mode"] == "HTML"
 
@@ -51,14 +51,14 @@ def test_send_message_envia_un_mensaje(telegram):
 def test_send_message_parte_mensajes_largos(telegram):
     api = make_api(telegram)
     api.send_message(100, "a" * 9000)
-    assert len(telegram.calls_of("send_message")) == 3
+    assert len(telegram.calls_of("sendMessage")) == 3
 
 
 def test_reintenta_cuando_telegram_devuelve_429(telegram):
     telegram.failures = [429]
     api = make_api(telegram)
     api.send_message(100, "hola")
-    assert len(telegram.calls_of("send_message")) == 2
+    assert len(telegram.calls_of("sendMessage")) == 2
     assert telegram.sent_texts() == ["hola"]
 
 
@@ -91,3 +91,12 @@ def test_get_updates_con_offset_negativo_devuelve_el_ultimo(telegram):
     api = make_api(telegram)
     ultimo = api.get_updates(offset=-1, timeout=0, limit=1)
     assert [u["update_id"] for u in ultimo] == [2]
+
+
+def test_usa_los_nombres_de_metodo_reales_de_telegram(telegram):
+    """La API real usa camelCase; el servidor falso devuelve 404 con otros nombres."""
+    api = make_api(telegram)
+    api.get_me()
+    api.get_updates(timeout=1)
+    api.send_message(100, "hola")
+    assert [call["method"] for call in telegram.calls] == ["getMe", "getUpdates", "sendMessage"]

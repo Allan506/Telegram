@@ -117,7 +117,7 @@ class TelegramApi:
         raise TelegramError(0, f"no se pudo contactar con Telegram: {last_error}")
 
     def get_me(self) -> dict[str, Any]:
-        return self.call("get_me")
+        return self.call("getMe")
 
     def get_updates(
         self,
@@ -131,7 +131,7 @@ class TelegramApi:
             params["offset"] = offset
         if allowed_updates:
             params["allowed_updates"] = allowed_updates
-        return self.call("get_updates", params, timeout=timeout + 15, max_attempts=3) or []
+        return self.call("getUpdates", params, timeout=timeout + 15, max_attempts=3) or []
 
     def send_message(
         self,
@@ -152,5 +152,5 @@ class TelegramApi:
                 params["parse_mode"] = parse_mode
             if reply_to_message_id:
                 params["reply_to_message_id"] = reply_to_message_id
-            sent.append(self.call("send_message", params))
+            sent.append(self.call("sendMessage", params))
         return sent

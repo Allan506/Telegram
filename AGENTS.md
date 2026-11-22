@@ -22,6 +22,9 @@ ruff check bot tests --select F,E9      # lint
 
 ## Convenciones
 
+- La API de Telegram usa camelCase (`getMe`, `getUpdates`, `sendMessage`). El servidor
+  falso de los tests devuelve 404 con cualquier otro nombre, para que un error así no
+  pase desapercibido.
 - Los textos que vienen del usuario se escapan con `html.escape` antes de enviarlos:
   los mensajes se envían con `parse_mode=HTML`.
 - Los tests usan un servidor HTTP real (`tests/conftest.py`) que imita Telegram y

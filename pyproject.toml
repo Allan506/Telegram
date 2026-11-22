@@ -7,4 +7,5 @@ dependencies = ["requests>=2.32,<3"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-q"
